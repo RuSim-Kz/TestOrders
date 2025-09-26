@@ -16,7 +16,7 @@ export default function NewOrderPage() {
     try {
       const order = await apiPost("/orders", { title, description, creatorId });
       router.push(`/orders/${order.id}`);
-    } catch (e) {
+    } catch {
       alert("Ошибка создания заказа");
     } finally {
       setLoading(false);
