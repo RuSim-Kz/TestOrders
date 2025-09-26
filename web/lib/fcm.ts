@@ -17,7 +17,7 @@ export function initFirebase(): void {
   };
 
   const fallbackConfig = {
-    apiKey: 'AIzaSyA3pUCjV4LNIqqVgZfGdS_uchmh-HQdlLY',
+    apiKey: 'BEyQoDJpxgAgqwS8nLPo8Z_L6cfZtoaWLncOy4sEByngDtJ54AiXSQgzlGPWnEm3Nvdbn_3f1MuqCulXwqUCXwA',
     authDomain: 'app1-db850.firebaseapp.com',
     projectId: 'app1-db850',
     messagingSenderId: '528949615273',
