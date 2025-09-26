@@ -17,11 +17,13 @@ export function initFirebase(): void {
   };
 
   const fallbackConfig = {
-    apiKey: 'BEyQoDJpxgAgqwS8nLPo8Z_L6cfZtoaWLncOy4sEByngDtJ54AiXSQgzlGPWnEm3Nvdbn_3f1MuqCulXwqUCXwA',
+    apiKey: 'AIzaSyA3pUCjV4LNIqqVgZfGdS_uchmh-HQdILY',
     authDomain: 'app1-db850.firebaseapp.com',
     projectId: 'app1-db850',
+    storageBucket: 'app1-db850.firebasestorage.app',
     messagingSenderId: '528949615273',
-    appId: '1:528949615273:web:41c13c2c1398e1f7d1e7b8'
+    appId: '1:528949615273:web:41c13c2c1398e1f7d1e7b8',
+    measurementId: 'G-WGDN4KS26Q'
   };
 
   const firebaseConfig = (
@@ -48,8 +50,8 @@ export async function enableFcm(userId: string): Promise<string | null> {
     }
 
     if (Notification.permission === 'default') {
-      const permission = await Notification.requestPermission();
-      if (permission !== 'granted') {
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
         alert('Уведомления не разрешены. Разрешите уведомления и попробуйте снова.');
         return null;
       }
