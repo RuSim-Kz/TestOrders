@@ -3,6 +3,14 @@ import { useState } from 'react';
 import { apiPost } from '../../lib/api';
 import { useRouter } from 'next/navigation';
 
+type Order = {
+  id: string;
+  title: string;
+  description: string;
+  status: 'NEW' | 'ACCEPTED' | 'DONE' | 'CANCELLED';
+  createdAt: string;
+};
+
 export default function NewOrderPage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -14,7 +22,7 @@ export default function NewOrderPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const order = await apiPost("/orders", { title, description, creatorId });
+      const order = await apiPost<Order>("/orders", { title, description, creatorId });
       router.push(`/orders/${order.id}`);
     } catch {
       alert("Ошибка создания заказа");
