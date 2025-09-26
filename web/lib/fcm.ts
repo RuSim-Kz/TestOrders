@@ -35,27 +35,61 @@ export async function enableFcm(userId: string): Promise<string | null> {
   if (!messaging) initFirebase();
   if (!messaging) return null;
   try {
-    if (typeof Notification !== 'undefined') {
-      if (Notification.permission !== 'granted') {
-        const permission = await Notification.requestPermission();
-        if (permission !== 'granted') {
-          alert('Уведомления отключены в браузере для этого сайта. Разрешите уведомления в настройках сайта и попробуйте снова.');
-          throw new Error('notifications_denied');
-        }
+    // Проверяем поддержку уведомлений
+    if (typeof Notification === 'undefined') {
+      alert('Этот браузер не поддерживает уведомления');
+      return null;
+    }
+
+    // Запрашиваем разрешение на уведомления
+    if (Notification.permission === 'denied') {
+      alert('Уведомления заблокированы. Разрешите уведомления в настройках браузера и обновите страницу.');
+      return null;
+    }
+
+    if (Notification.permission === 'default') {
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') {
+        alert('Уведомления не разрешены. Разрешите уведомления и попробуйте снова.');
+        return null;
       }
     }
 
-    const token = await getToken(messaging, { vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY, serviceWorkerRegistration: await navigator.serviceWorker.register('/firebase-messaging-sw.js') });
+    // Регистрируем Service Worker
+    let registration;
+    try {
+      registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+      console.log('Service Worker registered:', registration);
+    } catch (swError) {
+      console.error('Service Worker registration failed:', swError);
+      alert('Ошибка регистрации Service Worker. Попробуйте обновить страницу.');
+      return null;
+    }
+
+    // Получаем FCM токен
+    const token = await getToken(messaging, { 
+      vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY, 
+      serviceWorkerRegistration: registration 
+    });
+    
     if (token) {
       console.log('FCM token', token);
       await apiPost(`/users/${userId}/fcm`, { token });
+      alert('Уведомления включены!');
+    } else {
+      alert('Не удалось получить токен уведомлений');
+      return null;
     }
+
+    // Настраиваем обработку сообщений
     onMessage(messaging, (payload) => {
       alert((payload.notification?.title || 'FCM') + '\n' + (payload.notification?.body || ''));
     });
+    
     return token;
   } catch (e) {
     console.error('enableFcm error', e);
+    alert('Ошибка настройки уведомлений: ' + (e instanceof Error ? e.message : String(e)));
     return null;
   }
 }
