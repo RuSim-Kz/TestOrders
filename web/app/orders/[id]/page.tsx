@@ -16,7 +16,7 @@ export default function OrderPage() {
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    let s: Socket | null = io(API_URL, { transports: ['websocket'] });
+    const s: Socket | null = io(API_URL, { transports: ['websocket'] });
     s.emit('join', orderId);
     s.on('message:new', (msg: Message) => setMessages((m) => [...m, msg]));
     setSocket(s);
