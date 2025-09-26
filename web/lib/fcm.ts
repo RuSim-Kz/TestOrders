@@ -55,21 +55,21 @@ export async function enableFcm(userId: string): Promise<string | null> {
       }
     }
 
-    // Регистрируем Service Worker
+    // Регистрируем Service Worker (с fallback для Edge)
     let registration;
     try {
       registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
       console.log('Service Worker registered:', registration);
     } catch (swError) {
-      console.error('Service Worker registration failed:', swError);
-      alert('Ошибка регистрации Service Worker. Попробуйте обновить страницу.');
-      return null;
+      console.warn('Service Worker registration failed, trying without SW:', swError);
+      // Для Edge пробуем без Service Worker
+      registration = null;
     }
 
     // Получаем FCM токен
     const token = await getToken(messaging, { 
       vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY, 
-      serviceWorkerRegistration: registration 
+      serviceWorkerRegistration: registration || undefined
     });
     
     if (token) {
