@@ -79,10 +79,20 @@ export async function enableFcm(userId: string): Promise<string | null> {
     const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
     console.log('VAPID Key:', vapidKey ? 'Present' : 'Missing');
     
-    const token = await getToken(messaging, { 
-      vapidKey: vapidKey || undefined, 
-      serviceWorkerRegistration: registration || undefined
-    });
+    // Попробуем без VAPID ключа сначала
+    let token;
+    try {
+      token = await getToken(messaging, { 
+        vapidKey: vapidKey, 
+        serviceWorkerRegistration: registration || undefined
+      });
+    } catch (error) {
+      console.log('Failed with VAPID, trying without:', error);
+      // Fallback без VAPID
+      token = await getToken(messaging, { 
+        serviceWorkerRegistration: registration || undefined
+      });
+    }
     
     if (token) {
       console.log('FCM token', token);
