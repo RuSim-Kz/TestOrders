@@ -29,6 +29,13 @@ export function initFirebase(): void {
   const firebaseConfig = (
     envConfig.apiKey && envConfig.appId && envConfig.messagingSenderId && envConfig.projectId
   ) ? envConfig : fallbackConfig;
+  
+  console.log('Firebase Config:', {
+    projectId: firebaseConfig.projectId,
+    apiKey: firebaseConfig.apiKey ? 'Present' : 'Missing',
+    appId: firebaseConfig.appId ? 'Present' : 'Missing'
+  });
+  
   const app = initializeApp(firebaseConfig);
   messaging = getMessaging(app);
 }
@@ -69,8 +76,11 @@ export async function enableFcm(userId: string): Promise<string | null> {
     }
 
     // Получаем FCM токен
+    const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
+    console.log('VAPID Key:', vapidKey ? 'Present' : 'Missing');
+    
     const token = await getToken(messaging, { 
-      vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY, 
+      vapidKey: vapidKey || undefined, 
       serviceWorkerRegistration: registration || undefined
     });
     
