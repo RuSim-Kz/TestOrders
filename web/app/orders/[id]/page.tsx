@@ -57,7 +57,7 @@ export default function OrderPage() {
         <div className="row">
           <input className="input" placeholder="Ваш senderId (например, из сидов)" value={senderId} onChange={(e) => setSenderId(e.target.value)} style={{ minWidth: 320 }} />
           <button className="btn secondary" onClick={accept} disabled={!senderId}>Принять заказ</button>
-          <button className="btn" onClick={() => senderId ? enableFcm(senderId) : alert('Сначала введите senderId')}>Включить уведомления</button>
+          <button className="btn" onClick={() => alert('Уведомления работают автоматически при получении сообщений!')}>Уведомления включены</button>
         </div>
       </div>
       <div className="muted" style={{ marginTop: -8, marginBottom: 8 }}>Подсказка: возьмите один из id из вывода npm run seed.</div>
@@ -79,5 +79,9 @@ export default function OrderPage() {
     </div>
   );
 }
+
+
+
+
 
 
